@@ -30,11 +30,13 @@ CREATE TABLE IF NOT EXISTS users (
 conn.commit()
 
 # ======================
-# USER JOIN
+# USER JOIN + WELCOME MESSAGE
 # ======================
 def new_member(update: Update, context: CallbackContext):
     for member in update.message.new_chat_members:
         user_id = member.id
+        name = member.first_name
+
         join_time = datetime.now().isoformat()
 
         cursor.execute(
@@ -42,6 +44,22 @@ def new_member(update: Update, context: CallbackContext):
             (user_id, join_time)
         )
         conn.commit()
+
+        # 🔥 WELCOME MESSAGE
+        update.message.reply_text(
+            f"""🚀 Welcome {name}!
+
+Kamu sekarang mendapatkan akses **trial 24 jam** ⏳
+
+Gunakan kesempatan ini untuk:
+📊 Belajar analisa market
+📈 Mengikuti signal
+🧠 Meningkatkan skill trading
+
+⚠️ Setelah 24 jam, kamu akan otomatis dikeluarkan dari grup.
+
+Manfaatkan waktu ini sebaik mungkin 💪🔥"""
+        )
 
         print(f"{user_id} joined")
 
@@ -88,7 +106,8 @@ def start(update: Update, context: CallbackContext):
         update.message.reply_text(
             "🤖 Bot aktif!\n\n"
             "Fitur:\n"
-            "✅ Auto kick member setelah 24 jam\n\n"
+            "✅ Auto kick member setelah 24 jam\n"
+            "✅ Welcome message otomatis\n\n"
             "Ketik 'ping' untuk cek status bot."
         )
 
